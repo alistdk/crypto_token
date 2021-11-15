@@ -30,6 +30,8 @@ urlpatterns = [
     path('shop/', views.shop),
     path('single-blog/', views.single_b),
     path('single-product-details/', views.single_p),
+    path('login-metamask/', views.login_p),
+    
 ]
 
 

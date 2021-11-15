@@ -25,3 +25,6 @@ def single_b(request):
 
 def single_p(request):
     return render(request, "crypto_app/single-product-details.html")
+
+def login_p(request):
+    return render(request, "crypto_app/login-metamask.html")
