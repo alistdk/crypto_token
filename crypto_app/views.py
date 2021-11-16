@@ -28,3 +28,6 @@ def single_p(request):
 
 def login_p(request):
     return render(request, "crypto_app/login-metamask.html")
+
+def dashboard_p(request):
+    return render(request, "crypto_app/dashboard.html")
