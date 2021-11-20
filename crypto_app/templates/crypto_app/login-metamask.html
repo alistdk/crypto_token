@@ -8,11 +8,12 @@
 
     <!-- Scripts Metamask-->
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-	  <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Spartan:wght@300;600&display=swap" rel="stylesheet">
+    
     <script src="https://kit.fontawesome.com/ffec4ec2ed.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{% static 'css/style2.css' %}" />
 
@@ -65,32 +66,14 @@
                 
                 <div class="align-self-center w-100 px-lg-5 py-lg-4 p-4"></div>
 
-
-                <p class="font-weight-bold text-center text-muted">Inicia sesión con</p>
-                <div class="d-flex justify-content-around">
-                    <a class="btn btn-outline-light flex-grow-1 mr-2" href='javascript:;' onclick="login();"> Login Metamask </a>
-
-                    <script>
-                      Moralis.initialize("KN1cpFSpuRuNRNfDebKAMLgMSe0N0mY9YnYem0zQ"); // Application id from moralis.io id="boton"
-                      Moralis.serverURL = "https://idh14itv74xc.usemoralis.com:2053/server"; //Server url from moralis.io
-                    
-                      async function login(){
-                        console.log("login clicked");
-                        var user = await Moralis.Web3.authenticate();
-                        if(user){
-                          console.log(user);
-                          user.set("nickname","test");
-                          user.set("fav_color","blue");
-                          user.save();
-                          
-                          setTimeout( function() { window.location.href = "/dashboard/"; }, 3000 );
-
-                        }
-                      }
-                    
-                    </script>
+                  <button id='loginButton' onclick="" class="mx-auto rounded-md p-2 bg-purple-500 text-white">
+                    Login con MetaMask
+                  </button>
+                  <p id='userWallet' class='text-lg text-gray-600 my-2'></p>
+                
                 </div>
-                </div>
+
+
               
             </div>
         </div>
@@ -108,7 +91,57 @@
         </div>
       </div>
     </footer>
+    
+    <script>
+      window.userWalletAddress = null
+      const loginButton = document.getElementById('loginButton')
+      const userWallet = document.getElementById('userWallet')
   
+      function toggleButton() {
+        if (!window.ethereum) {
+          loginButton.innerText = 'MetaMask is not installed'
+          loginButton.classList.remove('bg-purple-500', 'text-white')
+          loginButton.classList.add('bg-gray-500', 'text-gray-100', 'cursor-not-allowed')
+          return false
+        }
+  
+        loginButton.addEventListener('click', loginWithMetaMask)
+      }
+  
+      async function loginWithMetaMask() {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+          .catch((e) => {
+            console.error(e.message)
+            return
+          })
+        if (!accounts) { return }
+  
+        window.userWalletAddress = accounts[0]
+        userWallet.innerText = window.userWalletAddress
+        loginButton.innerText = 'Sign out of MetaMask'
+  
+        loginButton.removeEventListener('click', loginWithMetaMask)
+        setTimeout(() => {
+          loginButton.addEventListener('click', signOutOfMetaMask)
+        }, 200)
+        setTimeout( function() { window.location.href = "/dashboard/"; }, 3000 );
+      }
+  
+      function signOutOfMetaMask() {
+        window.userWalletAddress = null
+        userWallet.innerText = ''
+        loginButton.innerText = 'Sign in with MetaMask'
+  
+        loginButton.removeEventListener('click', signOutOfMetaMask)
+        setTimeout(() => {
+          loginButton.addEventListener('click', loginWithMetaMask)
+        }, 200)
+      }
+  
+      window.addEventListener('DOMContentLoaded', () => {
+        toggleButton()
+      });
+    </script>
   
   </body>
 </html>
